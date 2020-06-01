@@ -1,0 +1,356 @@
+﻿<DOCTYPE html>
+
+<head>
+	<title>Audit.json</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+	<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@200&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Poiret+One&display=swap" rel="stylesheet">
+
+	<link href="style.css" rel="stylesheet">
+
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="lib/react.js"></script>
+	<script src="lib/react-dom.js"></script>
+	<script src="lib/babel.min.js"></script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+
+<body>
+	<div id='root'></div>
+
+<script>
+
+	alertError = (data,_,error) => {
+		//let errorMsg = data.responseJSON['error'];
+		let errorMsg = JSON.parse(data.responseText);
+		alert(`${error}: ${errorMsg}`);
+		return errorMsg;
+	};
+
+	async function waitForAjaxCall(method, url){
+		url = url.replace(/[ \t\n]/g, ''); // get rid of empty spaces and newlines
+		return new Promise((resolve, reject) => $.ajax({
+		    	method: method,
+		    	url: url
+		    })
+		    .done(resolve)
+		    .fail((data,_,error) => reject(alertError(data,_,error)))
+		);
+	}
+</script>
+
+<script type="text/babel">
+	google.charts.load('current', {'packages':['corechart']});
+
+class Icons{
+	static search = <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+	static back = <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="chevron-left" className="svg-inline--fa fa-chevron-left fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M34.52 239.03L228.87 44.69c9.37-9.37 24.57-9.37 33.94 0l22.67 22.67c9.36 9.36 9.37 24.52.04 33.9L131.49 256l154.02 154.75c9.34 9.38 9.32 24.54-.04 33.9l-22.67 22.67c-9.37 9.37-24.57 9.37-33.94 0L34.52 272.97c-9.37-9.37-9.37-24.57 0-33.94z"></path></svg>
+	static porno2 = <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="kiss-wink-heart" className="svg-inline--fa fa-kiss-wink-heart fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 504 512"><path fill="currentColor" d="M501.1 402.5c-8-20.8-31.5-31.5-53.1-25.9l-8.4 2.2-2.3-8.4c-5.9-21.4-27-36.5-49-33-25.2 4-40.6 28.6-34 52.6l22.9 82.6c1.5 5.3 7 8.5 12.4 7.1l83-21.5c24.1-6.3 37.7-31.8 28.5-55.7zm-177.6-4c-5.6-20.3-2.3-42 9-59.7 29.7-46.3 98.7-45.5 127.8 4.3 6.4.1 12.6 1.4 18.6 2.9 10.9-27.9 17.1-58.2 17.1-90C496 119 385 8 248 8S0 119 0 256s111 248 248 248c35.4 0 68.9-7.5 99.4-20.9-.3-.7-23.9-84.6-23.9-84.6zM168 240c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm120 156c0 19.2-28.7 41.5-71.5 44-8.5.8-12.1-11.8-3.6-15.4l17-7.2c13-5.5 20.8-13.5 20.8-21.5s-7.8-16-20.8-21.5l-17-7.2c-6-2.5-5.7-12.3 0-14.8l17-7.2c13-5.5 20.8-13.5 20.8-21.5s-7.8-16-20.8-21.5l-17-7.2c-8.8-3.7-4.6-16.6 3.6-15.4 42.8 2.5 71.5 24.8 71.5 44 0 13-13.4 27.3-35.2 36C274.6 368.7 288 383 288 396zm16-179c-8.3 7.4-21.6.4-19.8-10.8 4-25.2 34.2-42.1 59.9-42.1S400 181 404 206.2c1.7 11.1-11.3 18.3-19.8 10.8l-9.5-8.5c-14.8-13.2-46.2-13.2-61 0L304 217z"></path></svg>
+	static porno = <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="female" className="svg-inline--fa fa-female fa-w-8" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path fill="currentColor" d="M128 0c35.346 0 64 28.654 64 64s-28.654 64-64 64c-35.346 0-64-28.654-64-64S92.654 0 128 0m119.283 354.179l-48-192A24 24 0 0 0 176 144h-11.36c-22.711 10.443-49.59 10.894-73.28 0H80a24 24 0 0 0-23.283 18.179l-48 192C4.935 369.305 16.383 384 32 384h56v104c0 13.255 10.745 24 24 24h32c13.255 0 24-10.745 24-24V384h56c15.591 0 27.071-14.671 23.283-29.821z"></path></svg>
+	static vulgarity = <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angry" className="svg-inline--fa fa-angry fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path fill="currentColor" d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zM136 240c0-9.3 4.1-17.5 10.5-23.4l-31-9.3c-8.5-2.5-13.3-11.5-10.7-19.9 2.5-8.5 11.4-13.2 19.9-10.7l80 24c8.5 2.5 13.3 11.5 10.7 19.9-2.1 6.9-8.4 11.4-15.3 11.4-.5 0-1.1-.2-1.7-.2.7 2.7 1.7 5.3 1.7 8.2 0 17.7-14.3 32-32 32S136 257.7 136 240zm168 154.2c-27.8-33.4-84.2-33.4-112.1 0-13.5 16.3-38.2-4.2-24.6-20.5 20-24 49.4-37.8 80.6-37.8s60.6 13.8 80.6 37.8c13.8 16.5-11.1 36.6-24.5 20.5zm76.6-186.9l-31 9.3c6.3 5.8 10.5 14.1 10.5 23.4 0 17.7-14.3 32-32 32s-32-14.3-32-32c0-2.9.9-5.6 1.7-8.2-.6.1-1.1.2-1.7.2-6.9 0-13.2-4.5-15.3-11.4-2.5-8.5 2.3-17.4 10.7-19.9l80-24c8.4-2.5 17.4 2.3 19.9 10.7 2.5 8.5-2.3 17.4-10.8 19.9z"></path></svg>
+	static malware = <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="shield-virus" className="svg-inline--fa fa-shield-virus fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M224,192a16,16,0,1,0,16,16A16,16,0,0,0,224,192ZM466.5,83.68l-192-80A57.4,57.4,0,0,0,256.05,0a57.4,57.4,0,0,0-18.46,3.67l-192,80A47.93,47.93,0,0,0,16,128C16,326.5,130.5,463.72,237.5,508.32a48.09,48.09,0,0,0,36.91,0C360.09,472.61,496,349.3,496,128A48,48,0,0,0,466.5,83.68ZM384,256H371.88c-28.51,0-42.79,34.47-22.63,54.63l8.58,8.57a16,16,0,1,1-22.63,22.63l-8.57-8.58C306.47,313.09,272,327.37,272,355.88V368a16,16,0,0,1-32,0V355.88c0-28.51-34.47-42.79-54.63-22.63l-8.57,8.58a16,16,0,0,1-22.63-22.63l8.58-8.57c20.16-20.16,5.88-54.63-22.63-54.63H128a16,16,0,0,1,0-32h12.12c28.51,0,42.79-34.47,22.63-54.63l-8.58-8.57a16,16,0,0,1,22.63-22.63l8.57,8.58c20.16,20.16,54.63,5.88,54.63-22.63V112a16,16,0,0,1,32,0v12.12c0,28.51,34.47,42.79,54.63,22.63l8.57-8.58a16,16,0,0,1,22.63,22.63l-8.58,8.57C329.09,189.53,343.37,224,371.88,224H384a16,16,0,0,1,0,32Zm-96,0a16,16,0,1,0,16,16A16,16,0,0,0,288,256Z"></path></svg>
+	static securityImage = <svg id="ffa0e257-4b46-4632-a8d6-93195cbf254d" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="895.68" height="517.48" viewBox="0 0 895.68 517.48"><defs><linearGradient id="74471b12-b6be-488b-b2aa-2815e91483d9" x1="790.94" y1="640.76" x2="790.94" y2="264.76" gradientTransform="translate(1229.99 -336.2) rotate(90)" gradientUnits="userSpaceOnUse"><stop offset="0" stopColor="gray" stopOpacity="0.25"/><stop offset="0.54" stopColor="gray" stopOpacity="0.12"/><stop offset="1" stopColor="gray" stopOpacity="0.1"/></linearGradient><linearGradient id="f5c756da-9879-448e-9194-9478f83d355f" x1="785.97" y1="446.14" x2="785.97" y2="321.91" gradientTransform="translate(1166.67 -399.94) rotate(90)" xlinkHref="#74471b12-b6be-488b-b2aa-2815e91483d9"/><linearGradient id="5c9be04e-db0f-4829-87c1-2cfa193e30b8" x1="660.92" y1="518.19" x2="660.92" y2="494.17" gradientTransform="translate(1146.84 -172.9) rotate(90)" xlinkHref="#74471b12-b6be-488b-b2aa-2815e91483d9"/><linearGradient id="b92f3a53-b4d2-4abd-916c-aeb632188996" x1="433.66" y1="605.23" x2="433.66" y2="235.23" gradientTransform="translate(13.58 8.51)" xlinkHref="#74471b12-b6be-488b-b2aa-2815e91483d9"/><linearGradient id="44577794-7f8e-40ae-89fc-019e5bfac17e" x1="428.36" y1="413.71" x2="428.36" y2="291.46" gradientTransform="translate(-1.05 11.3)" xlinkHref="#74471b12-b6be-488b-b2aa-2815e91483d9"/><linearGradient id="666bb7d3-84d0-4835-ad07-c313c2384f21" x1="295.22" y1="484.61" x2="295.22" y2="460.98" gradientTransform="translate(28.38 37.45)" xlinkHref="#74471b12-b6be-488b-b2aa-2815e91483d9"/><linearGradient id="59939605-05af-4a9a-9980-f700897f3f8b" x1="455.07" y1="464.48" x2="455.07" y2="10.48" gradientTransform="matrix(1, 0, 0, 1, 0, 0)" xlinkHref="#74471b12-b6be-488b-b2aa-2815e91483d9"/><linearGradient id="6c0ba2ee-2d81-48f4-b4cf-f21b525fcc13" x1="449.07" y1="229.48" x2="449.07" y2="79.48" gradientTransform="matrix(1, 0, 0, 1, 0, 0)" xlinkHref="#74471b12-b6be-488b-b2aa-2815e91483d9"/><linearGradient id="45b0c09d-2995-447e-8cb2-7f6b59b5e20c" x1="298.07" y1="316.48" x2="298.07" y2="287.48" gradientTransform="matrix(1, 0, 0, 1, 0, 0)" xlinkHref="#74471b12-b6be-488b-b2aa-2815e91483d9"/><linearGradient id="e5b0a96a-81f6-4370-afe3-5a7d6a35b55e" x1="457.07" y1="517.48" x2="457.07" y2="364.48" gradientTransform="matrix(1, 0, 0, 1, 0, 0)" xlinkHref="#74471b12-b6be-488b-b2aa-2815e91483d9"/><linearGradient id="a1850e5a-cf77-4889-926a-0125112ab273" x1="611.23" y1="564.74" x2="611.23" y2="464.74" gradientTransform="matrix(1, 0, 0, 1, 0, 0)" xlinkHref="#74471b12-b6be-488b-b2aa-2815e91483d9"/><linearGradient id="66998849-614e-4d8a-b9ff-f14bbc588ed8" x1="611.23" y1="660.74" x2="611.23" y2="602.74" gradientTransform="matrix(1, 0, 0, 1, 0, 0)" xlinkHref="#74471b12-b6be-488b-b2aa-2815e91483d9"/></defs><g id='screen1'><g><rect x="792.23" y="49.92" width="19.88" height="470.41" transform="translate(247.6 844.09) rotate(-81.36)" fill="#f5f5f5"/><rect x="589.23" y="209.59" width="376" height="490.29" transform="translate(58.72 963.57) rotate(-81.36)" fill="url(#74471b12-b6be-488b-b2aa-2815e91483d9)"/><rect x="603.48" y="229.23" width="342.87" height="470.41" transform="translate(47.16 969.52) rotate(-81.36)" fill="#f5f5f5"/><circle cx="580.99" cy="251.51" r="4.86" transform="translate(92.88 596.86) rotate(-81.36)" fill="#ff5252"/><circle cx="594.2" cy="253.52" r="4.86" transform="translate(102.12 611.62) rotate(-81.36)" fill="#ff0"/><circle cx="607.41" cy="255.53" r="4.86" transform="translate(111.36 626.39) rotate(-81.36)" fill="#69f0ae"/><rect x="720.53" y="174.84" width="124.23" height="422.38" transform="translate(131.25 910.54) rotate(-81.36)" fill="url(#f5c756da-9879-448e-9194-9478f83d355f)"/><rect x="576.36" y="328.95" width="413.27" height="115.12" transform="translate(-85.2 -304.51) rotate(8.64)" fill="#ffd700"/><rect x="628.65" y="473.94" width="24.02" height="28.16" transform="translate(-90.24 856.82) rotate(-81.36)" fill="url(#5c9be04e-db0f-4829-87c1-2cfa193e30b8)"/><rect x="627.88" y="477.73" width="26.5" height="19.88" transform="translate(-71.61 -282.05) rotate(8.64)" fill="#ffd700"/><rect x="622.77" y="511.3" width="26.5" height="19.88" transform="translate(-66.63 -280.9) rotate(8.64)" fill="#ff5252"/><rect x="617.67" y="544.87" width="26.5" height="19.88" transform="translate(-61.64 -279.75) rotate(8.64)" fill="#ff9800"/><rect x="696.41" y="506.51" width="213.67" height="11.59" transform="translate(-66.07 -306.13) rotate(8.64)" fill="#ffd700" opacity="0.4"/><rect x="691.31" y="540.08" width="213.67" height="11.59" transform="translate(-61.09 -304.98) rotate(8.64)" fill="#ffd700" opacity="0.4"/><rect x="686.21" y="573.65" width="213.67" height="11.59" transform="translate(-56.1 -303.83) rotate(8.64)" fill="#ffd700" opacity="0.4"/></g></g><g id='screen2'><g><rect x="159.15" y="254.51" width="500.84" height="19.56" transform="translate(-199.95 -95.55) rotate(-12.6)" fill="#f5f5f5"/><rect x="186.23" y="243.74" width="522" height="370" transform="translate(-234.92 -83.38) rotate(-12.6)" fill="url(#b92f3a53-b4d2-4abd-916c-aeb632188996)"/><rect x="198.08" y="269.78" width="500.84" height="337.4" transform="translate(-237.01 -82.86) rotate(-12.6)" fill="#f5f5f5"/><ellipse cx="177.11" cy="316.25" rx="5.17" ry="4.78" transform="translate(-216.88 -145.01) rotate(-12.6)" fill="#ff5252"/><ellipse cx="191" cy="313.15" rx="5.17" ry="4.78" transform="translate(-215.87 -142.05) rotate(-12.6)" fill="#ff0"/><ellipse cx="204.88" cy="310.05" rx="5.17" ry="4.78" transform="translate(-214.86 -139.1) rotate(-12.6)" fill="#69f0ae"/><rect x="202.46" y="302.76" width="449.7" height="122.25" transform="translate(-221.25 -89.28) rotate(-12.6)" fill="url(#44577794-7f8e-40ae-89fc-019e5bfac17e)"/><rect x="207.83" y="307.54" width="440" height="113.28" transform="translate(-221.3 -89.16) rotate(-12.6)" fill="#ffd700"/><rect x="308.61" y="498.42" width="29.98" height="23.63" transform="translate(-255.67 -108.38) rotate(-12.6)" fill="url(#666bb7d3-84d0-4835-ad07-c313c2384f21)"/><rect x="309.83" y="499.96" width="28.22" height="19.56" transform="matrix(0.98, -0.22, 0.22, 0.98, -255.56, -108.32)" fill="#ffd700"/><rect x="317.12" y="532.57" width="28.22" height="19.56" transform="translate(-262.49 -105.94) rotate(-12.6)" fill="#ff5252"/><rect x="324.41" y="565.18" width="28.22" height="19.56" transform="matrix(0.98, -0.22, 0.22, 0.98, -269.43, -103.57)" fill="#ff9800"/><rect x="380.57" y="465.95" width="227.49" height="11.41" transform="translate(-243.14 -72.07) rotate(-12.6)" fill="#ffd700" opacity="0.4"/><rect x="387.86" y="498.56" width="227.49" height="11.41" transform="translate(-250.08 -69.69) rotate(-12.6)" fill="#ffd700" opacity="0.4"/><rect x="395.15" y="531.17" width="227.49" height="11.41" transform="translate(-257.02 -67.32) rotate(-12.6)" fill="#ffd700" opacity="0.4"/></g></g><g id='screen3'><g><rect x="170.07" y="18.48" width="568" height="24" fill="#f5f5f5"/><rect x="159.07" y="10.48" width="592" height="454" fill="url(#59939605-05af-4a9a-9980-f700897f3f8b)"/><rect x="170.07" y="42.48" width="568" height="414" fill="#fff"/><circle cx="183.94" cy="30.48" r="5.87" fill="#ff5252"/><circle cx="200.07" cy="30.48" r="5.87" fill="#ff0"/><circle cx="216.2" cy="30.48" r="5.87" fill="#69f0ae"/><rect x="194.07" y="79.48" width="510" height="150" fill="url(#6c0ba2ee-2d81-48f4-b4cf-f21b525fcc13)"/><rect x="200.07" y="85.48" width="499" height="139" fill="#ffd700"/><rect x="281.07" y="287.48" width="34" height="29" fill="url(#45b0c09d-2995-447e-8cb2-7f6b59b5e20c)"/><rect x="282.57" y="289.48" width="32" height="24" fill="#ffd700"/><rect x="282.57" y="330.48" width="32" height="24" fill="#ff5252"/><rect x="282.57" y="371.48" width="32" height="24" fill="#ff9800"/><rect x="367.57" y="294.48" width="258" height="14" fill="#ffd700" opacity="0.4"/><rect x="367.57" y="335.48" width="258" height="14" fill="#ffd700" opacity="0.4"/><rect x="367.57" y="376.48" width="258" height="14" fill="#ffd700" opacity="0.4"/><rect x="364.07" y="364.48" width="186" height="153" fill="url(#e5b0a96a-81f6-4370-afe3-5a7d6a35b55e)"/><g id='lock'><path d="M559.15,531.41a52.08,52.08,0,0,1,104.17,0v33.33H677.9V531.41a66.67,66.67,0,1,0-133.33,0v33.33h14.58Z" transform="translate(-152.16 -191.26)" fill="url(#a1850e5a-cf77-4889-926a-0125112ab273)"/><path d="M561.23,530.74a50,50,0,0,1,100,0v32h14v-32a64,64,0,0,0-128,0v32h14Z" transform="translate(-152.16 -191.26)" fill="#fff"/></g><rect x="372.07" y="369.48" width="174" height="142" fill="#ffd700"/><rect x="372.07" y="369.48" width="174" height="142" fill="#fff"/><rect x="372.07" y="397.48" width="174" height="86" fill="#ffd700"/><path d="M624,615.5a12.76,12.76,0,1,0-22,8.74v27.22a9.28,9.28,0,0,0,18.56,0V624.24A12.7,12.7,0,0,0,624,615.5Z" transform="translate(-152.16 -191.26)" fill="url(#66998849-614e-4d8a-b9ff-f14bbc588ed8)"/><path d="M622.23,617.74a11,11,0,1,0-19,7.53v23.47a8,8,0,1,0,16,0V625.27A11,11,0,0,0,622.23,617.74Z" transform="translate(-152.16 -191.26)" opacity="0.2"/></g></g></svg>
+	static doc = <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="file-code" className="svg-inline--fa fa-file-code fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M384 121.941V128H256V0h6.059c6.365 0 12.47 2.529 16.971 7.029l97.941 97.941A24.005 24.005 0 0 1 384 121.941zM248 160c-13.2 0-24-10.8-24-24V0H24C10.745 0 0 10.745 0 24v464c0 13.255 10.745 24 24 24h336c13.255 0 24-10.745 24-24V160H248zM123.206 400.505a5.4 5.4 0 0 1-7.633.246l-64.866-60.812a5.4 5.4 0 0 1 0-7.879l64.866-60.812a5.4 5.4 0 0 1 7.633.246l19.579 20.885a5.4 5.4 0 0 1-.372 7.747L101.65 336l40.763 35.874a5.4 5.4 0 0 1 .372 7.747l-19.579 20.884zm51.295 50.479l-27.453-7.97a5.402 5.402 0 0 1-3.681-6.692l61.44-211.626a5.402 5.402 0 0 1 6.692-3.681l27.452 7.97a5.4 5.4 0 0 1 3.68 6.692l-61.44 211.626a5.397 5.397 0 0 1-6.69 3.681zm160.792-111.045l-64.866 60.812a5.4 5.4 0 0 1-7.633-.246l-19.58-20.885a5.4 5.4 0 0 1 .372-7.747L284.35 336l-40.763-35.874a5.4 5.4 0 0 1-.372-7.747l19.58-20.885a5.4 5.4 0 0 1 7.633-.246l64.866 60.812a5.4 5.4 0 0 1-.001 7.879z"></path></svg>
+}
+
+var isMobile = () => window.matchMedia("(orientation: portrait)").matches;
+
+function Accuracy({correct, total}){
+
+	let pieChart = React.useRef(null);
+
+	React.useEffect(()=>{
+		if (pieChart.current == null) return;
+		var data = google.visualization.arrayToDataTable([
+			['Accuracy', 'Number correct'],
+			['correct', correct],
+			['incorrect', total - correct]
+		]);
+		var options = {
+			backgroundColor: 'transparent',
+			chartArea: {
+				left:'auto', 
+				top:'auto', 
+				width:'auto', 
+				height:'auto', 
+				backgroundColor: 'transparent'
+			},
+			legend: 'none',
+			slices: {
+				0: { color: 'royalblue' },
+				1: { color: 'transparent' }
+			}}
+		;
+		var chart = new google.visualization.PieChart(pieChart.current);
+		chart.draw(data, options);
+	});
+	  
+	return (
+		<div id='pieChartContainer' className='col center centerCross'>
+			<h2>Recall Accuracy</h2>
+			<div id='pieChart' ref={pieChart}></div>
+		</div>
+	);
+}
+
+function Loader(){
+	return <div className='loaderContainer'><div className='loader'></div></div>;
+}
+
+function Clear(){
+	return <div className='resultBadge clear'><p>clear</p></div>;
+}
+
+function Filtered({filter}){
+	return <div className='resultBadge filtered'><p>{filter}</p></div>;
+}
+
+function Result({filter, url, pred, risk}){
+	return (
+		<tr className='result'>						
+			<td className='url'>{url}</td>
+			{((pred && risk==filter) || (!pred && risk=='')) ?
+				((pred) ? 
+				<td colSpan="2"><Filtered filter={filter}/></td> :
+				<td colSpan="2"><Clear/></td>
+				) : (
+				<>
+					<td className='pred'>{(pred) ? 
+						<Filtered filter={filter}/> : <Clear/>
+					}</td>
+					<td className='risk'>{(risk!='') ? 
+						<Filtered filter={risk}/> : <Clear/>
+					}</td>
+				</>)
+			}
+			<td></td>
+		</tr>
+	);
+}
+
+function ResultTable({filter, results}){
+	return <>
+		<div className='trueURL row center centerCross'>
+			<p>'{results.url}':</p>
+			{(results.pred) ? <Filtered filter={filter}/> : <Clear/>}
+		</div>
+		{(results.urls.length==0) ? <p style={
+			{textAlign: 'center', color: 'grey'}
+		}>No similar urls in database.</p> : <>
+			<p style={{marginLeft: '2rem', marginBottom: '0'}}>Similar URLs in audit.json</p>
+			<table className='resultsTable'>
+				<thead>
+					<tr className='header'>
+						<th>url</th>
+						<th>prediction</th>
+						<th>audit.json</th>
+					</tr>
+				</thead>
+				<tbody>
+					{results.urls.map(({url, pred, risk}, i)=>(
+						<Result key={'url'+i} filter={filter} url={url} pred={pred} risk={risk}/>
+					))}
+				</tbody>
+			</table>
+		</>}
+	</>
+}
+
+function Query({filterType}){
+	//let [results, setResults] = React.useState(null);
+
+	let [state, dispatch] = React.useReducer((state, action)=>{
+
+		switch(action.type){
+			case 'loading':
+				return  {results: <Loader/>};
+
+			case 'loaded':
+				return {
+					results: <ResultTable filter={filterType} results={action.results}/>
+				};
+
+			default:
+				return state;
+		}
+	}, {results: null});
+
+	let inputRef = React.useRef(null);
+
+	return (
+		<div className='queryContainer'>
+			<form className='query row' method='post' onSubmit={async (e)=>{
+				e.preventDefault();
+
+				let textInput = inputRef.current.value;
+				textInput = encodeURIComponent(textInput);
+				// can't include forward slashes, ? in url
+;
+				e.target.reset();
+				dispatch({type: 'loading'});
+				let results = await waitForAjaxCall('GET', `
+					/filterQuery/${filterType}
+					/url/${textInput}
+				`);
+				console.log(results);
+				dispatch({type: 'loaded', results: results});
+
+				return false;
+			}}>
+				<input 
+					className='queryInput' 
+					name='queryInput'
+					ref={inputRef}
+					placeholder='search url' 
+					required
+				/>
+				<button className='querySubmit center centerCross'>
+					{Icons.search}
+				</button>
+			</form>
+			<div className='results'>
+				{state.results}
+			</div>
+		</div>
+	);s
+};
+
+function BackButton({selectTab}){
+	return <div id='backButton' onClick={()=>selectTab(null)}>{Icons.back}</div>
+}
+
+function Filter({name, selectedTab, selectTab, innerHTML}){
+	return (name!=selectedTab) ? null : (
+		<section id={name + 'Filter'} className='filter col centerCross'>
+			<header className='card row center centerCross'>
+				<BackButton selectTab={selectTab}/>
+				<h1>{name + ' filter'}</h1>
+			</header>
+			<Query filterType={name}/>
+			{innerHTML}
+		</section>
+	)
+}
+
+function FilterTab({name, desc, icon, colour, selectTab}){
+	return (
+		<section className={'filterTab card'} onClick={()=>selectTab(name)}>
+			<div className='filterTabIconContainer'>{icon}</div>
+			<h2>{name}</h2>
+			<p>{desc}</p>
+		</section>
+	);
+}
+
+const swears = ["anal", "anus", "arse", "ballsack", "balls", "bastard", "bitch", "biatch", "bloody", "blowjob", "blow job", "bollock", "bollok", "boner", "boob", "bugger", "bum", "butt", "buttplug", "clitoris", "cock", "coon", "crap", "cunt", "damn", "dick", "dildo", "dyke", "fag", "feck", "fellate", "fellatio", "felching", "fuck", "fudgepacker", "flange", "Goddamn", "God damn", "hell", "homo", "jerk", "jizz", "knobend", "labia", "lmao", "lmfao", "muff", "nigger", "nigga", "omg", "penis", "piss", "poop", "prick", "pube", "pussy", "queer", "scrotum", "sex", "shit", "sh1t", "slut", "smegma", "spunk", "tit", "tosser", "turd", "twat", "vagina", "wank", "whore", "wtf", "urbandictionary"]; 
+
+function App() {
+	let [selectedTab, selectTab] = React.useState(null);
+
+	let filterTabs = [
+		<FilterTab 
+			name='vulgarity' 
+			desc='Basic word search filter.'
+			icon={Icons.vulgarity}
+			selectTab={selectTab}
+		/>,
+		<FilterTab
+			name='malware' 
+			desc='Regex filter parsed from ad block filters.'
+			icon={Icons.malware}
+			selectTab={selectTab}
+		/>,
+		<FilterTab
+			name='pornography' 
+			desc='Word search filter and machine learning.'
+			icon={Icons.porno}
+			selectTab={selectTab}
+		/>
+	];
+
+
+	let filters = [
+		<Filter name='vulgarity' selectedTab={selectedTab} selectTab={selectTab} innerHTML={
+			<section id='vulgarityAbout' className='card col'>
+				<Accuracy correct={1150} total={1150}/>
+				<p>The filter is a simple test that iterates through this 
+					list to see if a url includes any of these words:</p>
+		
+				<div id='swearGrid'>
+					{swears.map((swear)=><div>{swear}</div>)}
+				</div>
+				<p><a href='http://www.bannedwordlist.com/lists/swearWords.txt' target='_blank'>Source</a> with 
+					 2+ word phrases omitted, and took out 'ass' as it created too many false positives. </p>
+				<p>Only 51% accuracy without 'urbandictionary' manually inserted.</p>
+			</section>
+		}/>,
+		<Filter name='malware' selectedTab={selectedTab} selectTab={selectTab} innerHTML={
+			<section id='vulgarityAbout' style={{width: '70%'}} className='card col'>
+				<Accuracy correct={59} total={72}/>
+				<p>This filter parses an ad block filter to get domains.</p>
+				<p>Ad block filters have their own abstract syntax for recognizing domains, such as this figure below:</p>
+				<img style={{width: '100%'}} src='adBlockImage.png'/>
+				<p> Complete filter rules <a href='https://adblockplus.org/filter-cheatsheet' target='_blank'>here</a>.</p>
+				<p> The filter was designed not just to block urls, but to also hide ad elements on the dom.</p>
+				<p>I created <a>a long python script.</a> to read through each line and convert the code into regex.</p>
+				<p>I used the ad block list that my ad blocker 'uBlock Origin' uses, <a href='https://easylist.to/easylist/easylist.txt' target='_blank'>easylist</a>.</p>
+				<p>There's about 32 000 domains, and for each url we check if the regex matches.</p>
+				<p> It would have 100% accuracy if not for one domain up142.com and it's variants. This figure shows the false negatives:</p>
+				<img style={{width: '100%'}} src='malwareFalseNegatives.png'/>
+				<p> It's slow to run, but for a sample of 100 ground-truth negative malware, 99/100 were correctly classified.</p>
+			</section>
+		}/>,
+		<Filter name='pornography' selectedTab={selectedTab} selectTab={selectTab} innerHTML={
+			<section id='vulgarityAbout' style={{width: '70%'}} className='card col'>
+				<Accuracy correct={338} total={349}/>
+				<p> Using <a href='https://github.com/Bon-Appetit/porn-domains' target="_blank">this</a> compilation of pornographic domains, I was able to get 87.9% accuracy.</p>
+				<p> By also checking for the words 'porn' and 'hentai', I was able to get 98.8% accuracy.</p>
+				<p> However, this was based on precompiled lists of domains, and some cherry picking terms.</p>
+				<p> I wanted to see if I could create a neural network that detects features in a url, and determines if it is porn or not, especially since the porn risk catagory had the most data.</p>
+				<p> One problem is that machine learning theory about words is not trivially applied to urls.</p>
+				<p> Using a word list I found online, and a greedy algorithm I developed that picks the first index where it can form a word, then chooses the largest word it can form,
+					I was able to convert urls into word lists. </p>	
+				<p> I enriched the word dataset with some non-dictionary words, such as hentai, busty etc that showed up in the data.</p>
+				<img style={{width: '50%'}} src='wordsInURL.png'/>
+				<p> I decided to do a 80:20 split for training and testing, with 1949 examples for porn sites, and 2000 random examples for normal sites -- about a 50:50 split between positive and negative examples.</p>
+				<p> Because of a lack of data, I decided to not have validation data, so as to keep my training size not too small.</p>
+				<p> I could have done cross validation with leave-p-out or k-fold, but I just wanted to try out the model first</p>
+				<p> The figure below shows the architecture: </p>
+				<img style={{width: '50%', objectFit: 'contain'}} src='rnnArchitecture.png'/>
+				<p> The training was done full batch instead of stochastic, because the number of words in a sentence is variable so each batch won't have a fixed size.</p>
+				<p> When dealing with recurrent neural nets and batch sentences in the past, I used pytorch's TabularDataset and BucketIterator to automatically pad the sentences.</p>
+				<p> I didn't have time to apply that to this example.</p>
+				<p> The learning was done full batch with Adam gradient descent over 5 epochs, learning rate=0.001, with the training set being shuffled every epoch.</p>
+				<p> The loss looks terrible, but the final accuracy is pretty good. </p>
+				<img style={{width: '75%'}} src='rnnLoss.png'/>
+				<p> With more samples and more time I could implement stochastic gradient descent, and use validation accuracy to determine overfitting and better tune hyper parameters</p>
+			</section>
+		}/>
+	]
+	return <>
+		{(selectedTab!=null) ? null: (
+			<section id='home' className='col centerCross'>
+				<header className='row center centerCross card'>
+					<div className='docIcon'>{Icons.doc}</div>
+					<h1>Audit</h1>
+				</header>
+				<div id='securityIconContainer' className='col centerCross'>{Icons.securityImage}</div>
+				<section className={'stretch '+(isMobile() ? 'col' : 'row')}>{filterTabs}</section>
+			</section>
+		)}
+		{filters}
+	</>
+}
+
+
+ReactDOM.render( <App/>, document.getElementById("root"));
+
+</script>
+
+</body>
+
+
+</html>
+
+

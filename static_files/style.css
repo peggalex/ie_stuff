@@ -1,0 +1,367 @@
+html {
+    margin: 0;
+}
+
+body {
+    margin: 0;
+}
+
+body{ background-color: gold; }
+
+body, input, button {
+    font-family: 'Public Sans', sans-serif;
+}
+
+body *{
+    transition: background-color 1s, opacity 1s, color 1s, box-shadow 1s, fill 1s;
+}
+
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+}
+
+.centerCross {
+    display:flex;
+    align-items: center;
+}
+
+.stretch {
+    display: flex;
+    align-items: stretch;
+}
+
+.card {
+    background: white;
+    box-shadow: 0 0.1rem 0.5rem -0.1rem black;
+    margin: 1rem;
+}
+
+header {
+    height: 5rem;
+    width: 95vw;
+}
+
+header .docIcon {
+    width: 1.5rem;
+    margin-right: 0.5rem;
+}
+
+header .docIcon > svg {
+    color: gold;
+    /*filter: drop-shadow(0 0 0.1rem rgba(0,0,0,0.1));*/
+}
+
+section.filterTab {
+    padding: 1rem;
+    flex: 1
+}
+
+.filterTab {
+    transition: transform 0.5s;
+    margin-bottom: 0.5rem;
+}
+
+.filterTab:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+}
+
+.filterTab h2 {
+    margin-top: 0.5rem;
+    font-family: 'Poiret One', cursive;
+}
+
+#securityIconContainer svg {
+    height: 50vh;
+    width: auto;
+    max-width:95vw;
+}
+
+#home h1 {
+    /*font-family: 'Poiret One', cursive;*/
+    font-weight: 400;
+    margin: 0.5rem;
+    font-size: 2rem;
+}
+
+.filterTabIconContainer {
+    width: 5rem;
+    height: 5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: -3rem;
+    border-radius: 5rem;
+    background-color: white;
+    box-shadow: 0 0.1rem 0.5rem -0.1rem black;
+}
+
+.filterTabIconContainer > svg {
+    height: 3.5rem;
+    color: royalblue;
+    /*filter: drop-shadow(0 0 0.1rem rgba(0,0,0,0.25));*/
+}
+
+#home {
+    /*overflow:auto;*/
+}
+
+#home.hideHome{
+}
+
+#home.hideHome, #home.hideHome * {
+    overflow: hidden;
+    word-wrap: break-word
+}
+
+#backButton {
+    position: absolute;
+    left: min(3rem, 5vw);
+    width: 2rem;
+    height: 2rem;
+}
+
+#backButton > svg {
+    width: 2rem;
+    height: 2rem;  
+    transition: color 0.25s; 
+    color: gold;
+}
+
+#backButton > svg:hover {
+    cursor: pointer;
+    color: royalblue;
+}
+
+.filter > header > h1 {
+    /*letter-spacing: 2px;
+    font-family: 'Poiret One', sans-serif;
+    font-size: 2rem;
+    text-transform: capitalize;
+    margin: 0.5rem;*/
+    font-weight: 400;
+    margin: 0.5rem;
+    font-size: 2rem;
+    text-transform: capitalize;
+
+}
+
+.filter > header {
+    margin-bottom: 3rem;
+}
+
+.query {
+    background-color: white;
+    box-shadow: 0 0.1rem 0.5rem -0.1rem black;
+    max-width: 90vw;
+    margin-bottom: 0;
+}
+
+.queryInput{
+    height: 4rem;
+    width: 60vw;
+    padding-left: 2rem;
+    border: none;
+    outline: none;
+}
+
+.querySubmit {
+    width: 4rem;
+    background-color: whitesmoke;
+    height: 4rem;
+    border: none;
+    outline: none;
+}
+
+.querySubmit:hover {
+    cursor: pointer;
+    color: white;
+}
+
+.queryContainer {
+    background-color: white;
+}
+
+.queryContainer.loading {
+    
+}
+
+.loader {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid gold; 
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+.loaderContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 7rem;
+}
+
+.resultsTable {
+    width: 100%;
+    border-spacing: 0 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.resultsTable td.url {
+    padding-left: 0.5rem;
+    max-width: 40vw;
+    font-size: 8px;
+    word-break: break-all;
+}
+
+.resultsTable td {
+    height: 4rem;
+}
+
+.resultsTable tr.header > th {
+    font-family: 'Poiret One', cursive;
+}
+
+.resultBadge {
+    text-align: center;
+    height: 1.25rem;
+    vertical-align: middle;
+    border-radius: 1.5rem;
+    width: auto;
+    background-color: mistyrose;
+    color: darkred;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.trueURL .resultBadge{
+    height: 2rem;
+    margin-left: 1rem;
+    padding: 0 1rem;
+}
+
+.trueURL .resultBadge > p{
+    font-size: 16px;
+}
+
+.resultBadge > p{
+    margin: 0;
+    font-size: 12px;
+}
+
+.resultBadge.clear {
+    background-color: honeydew;
+    color: darkgreen;
+}
+
+#vulgarityAbout {
+    padding: 1rem;
+}
+
+#swearGrid{
+    grid-template-columns: repeat(4, 1fr);
+    display: grid;
+}
+
+#swearGrid > div {
+    border-bottom: solid thin whitesmoke;
+    color: darkgrey;
+    text-align: center;
+}
+
+#pieChart {
+    width: 30vw;
+    height: 30vh;
+}
+
+#pieChartContainer {
+}
+
+#pieChartContainer > h2 {
+    margin-bottom: -2rem;
+    margin-top: 0;
+}
+
+#pieChart ellipse{ stroke-width: 0}
+
+@media only screen and (orientation: portrait) {
+    .filterTab {
+        margin-top: 2rem;
+    }   
+}
+
+#screen1 {
+    transform: translate(-153px, 30px);
+    animation: screen1 1s ease-out 0.5s forwards;
+}
+
+#screen1 > g{
+    transform: rotate(-8deg);
+    animation: screen1g 1s ease-out 0.5s forwards;
+
+}
+
+#screen2 {
+    transform: translate(200px, -30px);
+    animation: screen2 1s ease-out 0.75s forwards;
+
+}
+
+#screen2 > g {
+    transform: rotate(13deg);
+    animation: screen2g 1s ease-out 0.75s forwards;
+
+}
+
+@keyframes screen1 {
+    from {
+        transform: translate(-153px, 30px);
+    } to {
+        transform: translate(0px, 0px);
+    }
+}
+
+@keyframes screen1g {
+    from {
+        transform: rotate(-8deg);
+    } to {
+        transform: rotate(0deg);
+    }
+}
+
+@keyframes screen2 {
+    from {
+        transform: translate(200px, -30px);
+    } to {
+        transform: translate(0px, 0px);
+    }
+}
+
+@keyframes screen2g {
+    from {
+        transform: rotate(13deg);
+    } to {
+        transform: rotate(0deg);
+    }
+}
+
+
